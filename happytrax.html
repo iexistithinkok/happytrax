@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Happy Trax – Sugar Coast Playlist</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top, #0b0f21, #070707);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: white;
+    }
+
+    .glass-player {
+        width: 90%;
+        max-width: 520px;
+        padding: 30px 26px 32px;
+        border-radius: 22px;
+        backdrop-filter: blur(25px);
+        background: rgba(8, 8, 20, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow:
+            0 0 40px rgba(0, 255, 255, 0.25),
+            0 0 35px rgba(255, 0, 255, 0.18),
+            inset 0 0 18px rgba(255, 255, 255, 0.05);
+        text-align: center;
+    }
+
+    .title-main {
+        font-size: 1.5rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin: 0 0 4px 0;
+    }
+
+    .title-sub {
+        font-size: 0.85rem;
+        opacity: 0.7;
+        margin: 0 0 18px 0;
+    }
+
+    .controls-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .ctrl-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 247, 255, 0.7);
+        background: radial-gradient(circle at 20% 20%, #2b1c3f, #050716);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        box-shadow: 0 0 16px rgba(0, 247, 255, 0.6);
+        transition: transform 0.08s ease-out, box-shadow 0.1s ease-out, border-color 0.1s;
+    }
+
+    .ctrl-btn:hover {
+        transform: translateY(-1px) scale(1.03);
+        box-shadow:
+            0 0 20px rgba(0, 247, 255, 0.9),
+            0 0 24px rgba(255, 0, 255, 0.5);
+        border-color: rgba(255, 0, 255, 0.9);
+    }
+
+    .ctrl-btn:active {
+        transform: translateY(0) scale(0.97);
+        box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+    }
+
+    .ctrl-btn.play {
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+    }
+
+    select {
+        margin-top: 4px;
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(0, 255, 255, 0.4);
+        color: white;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        backdrop-filter: blur(8px);
+        appearance: none;
+    }
+
+    select option {
+        background: #050816;
+        color: white;
+    }
+
+    select:focus {
+        border-color: #00f7ff;
+        box-shadow: 0 0 10px #00f7ff;
+    }
+
+    audio {
+        width: 100%;
+        margin-top: 14px;
+    }
+
+    .equalizer {
+        margin-top: 22px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 7px;
+    }
+
+    .bar {
+        width: 7px;
+        background: linear-gradient(180deg, #00f7ff, #ff00ff);
+        border-radius: 4px;
+        animation: bounce 1s infinite ease-in-out;
+        box-shadow: 0 0 16px rgba(0, 255, 255, 0.8);
+    }
+
+    .bar:nth-child(1) { animation-delay: -0.4s; }
+    .bar:nth-child(2) { animation-delay: -0.2s; }
+    .bar:nth-child(3) { animation-delay: 0s; }
+    .bar:nth-child(4) { animation-delay: -0.3s; }
+    .bar:nth-child(5) { animation-delay: -0.1s; }
+
+    @keyframes bounce {
+        0%   { height: 9px; }
+        40%  { height: 40px; }
+        80%  { height: 18px; }
+        100% { height: 9px; }
+    }
+
+    .now-playing {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .now-playing span {
+        font-weight: 600;
+    }
+</style>
+</head>
+
+<body>
+<div class="glass-player">
+    <h2 class="title-main">Happy Trax</h2>
+    <p class="title-sub">Sugar Coast Music Folder</p>
+
+    <div class="controls-row">
+        <button class="ctrl-btn" onclick="prevTrack()" title="Previous track">«</button>
+        <button class="ctrl-btn play" onclick="togglePlay()" title="Play / Pause">?</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Next track">»</button>
+    </div>
+
+    <select id="trackList" onchange="changeTrack()">
+        <option value="??? The Enchanted Waters (1).mp3">??? The Enchanted Waters (1)</option>
+        <option value="??? The Enchanted Waters (2).mp3">??? The Enchanted Waters (2)</option>
+        <option value="??? The Enchanted Waters.mp3">??? The Enchanted Waters</option>
+        <option value="1.2.mp3">1.2</option>
+        <option value="1.mp3">1</option>
+        <option value="down by the docks (1).mp3">down by the docks (1)</option>
+        <option value="down by the docks (2).mp3">down by the docks (2)</option>
+        <option value="down by the docks.mp3">down by the docks</option>
+        <option value="From the Deep, We Rise (1).mp3">From the Deep, We Rise (1)</option>
+        <option value="From the Deep, We Rise (2).mp3">From the Deep, We Rise (2)</option>
+        <option value="From the Deep, We Rise.mp3">From the Deep, We Rise</option>
+        <option value="Having fun.mp3">Having fun</option>
+        <option value="Holy War (1).mp3">Holy War (1)</option>
+        <option value="Holy War.mp3">Holy War</option>
+        <option value="It Feels Right.mp3">It Feels Right</option>
+        <option value="It's a crazy crazy world! (1).mp3">It's a crazy crazy world! (1)</option>
+        <option value="It's a crazy crazy world!.mp3">It's a crazy crazy world!</option>
+        <option value="It’s Not the Dress You Fear (1).mp3">It’s Not the Dress You Fear (1)</option>
+        <option value="It’s Not the Dress You Fear (2).mp3">It’s Not the Dress You Fear (2)</option>
+        <option value="It’s Not the Dress You Fear (3).mp3">It’s Not the Dress You Fear (3)</option>
+        <option value="It’s Not the Dress You Fear.mp3">It’s Not the Dress You Fear</option>
+        <option value="Joy and Happiness.mp3">Joy and Happiness</option>
+        <option value="Kentuckiana the greatest place.mp3">Kentuckiana the greatest place</option>
+        <option value="KOA Is the Only Way to Live (1).mp3">KOA Is the Only Way to Live (1)</option>
+        <option value="KOA Is the Only Way to Live (2).mp3">KOA Is the Only Way to Live (2)</option>
+        <option value="KOA Is the Only Way to Live.mp3">KOA Is the Only Way to Live</option>
+        <option value="Lakeside Horizon (1).mp3">Lakeside Horizon (1)</option>
+        <option value="Lakeside Horizon (2).mp3">Lakeside Horizon (2)</option>
+        <option value="Lakeside Horizon.mp3">Lakeside Horizon</option>
+        <option value="Let Me Be Loud (1).mp3">Let Me Be Loud (1)</option>
+        <option value="Let Me Be Loud.mp3">Let Me Be Loud</option>
+        <option value="Love Thy Neighbor.mp3">Love Thy Neighbor</option>
+        <option value="Memory of You.mp3">Memory of You</option>
+        <option value="Opa Opa.mp3">Opa Opa</option>
+        <option value="Opa! Acropolis (1).mp3">Opa! Acropolis (1)</option>
+        <option value="Opa! Acropolis (2).mp3">Opa! Acropolis (2)</option>
+        <option value="Opa! Acropolis (3).mp3">Opa! Acropolis (3)</option>
+        <option value="Opa! Acropolis (4).mp3">Opa! Acropolis (4)</option>
+        <option value="Opa! Acropolis (5).mp3">Opa! Acropolis (5)</option>
+        <option value="Opa! Acropolis (6).mp3">Opa! Acropolis (6)</option>
+        <option value="Opa! Acropolis (7).mp3">Opa! Acropolis (7)</option>
+        <option value="Opa! Acropolis.mp3">Opa! Acropolis</option>
+        <option value="Opa! Tarpon Dreams (1).mp3">Opa! Tarpon Dreams (1)</option>
+        <option value="Opa! Tarpon Dreams.mp3">Opa! Tarpon Dreams</option>
+        <option value="Paradise in Tarpon Springs (1).mp3">Paradise in Tarpon Springs (1)</option>
+        <option value="Paradise in Tarpon Springs (2).mp3">Paradise in Tarpon Springs (2)</option>
+        <option value="Paradise in Tarpon Springs (3).mp3">Paradise in Tarpon Springs (3)</option>
+        <option value="Paradise in Tarpon Springs (4).mp3">Paradise in Tarpon Springs (4)</option>
+        <option value="Paradise in Tarpon Springs (5).mp3">Paradise in Tarpon Springs (5)</option>
+        <option value="Paradise in Tarpon Springs.mp3">Paradise in Tarpon Springs</option>
+        <option value="Riverside Memories (1).mp3">Riverside Memories (1)</option>
+        <option value="Riverside Memories (2).mp3">Riverside Memories (2)</option>
+        <option value="Riverside Memories (3).mp3">Riverside Memories (3)</option>
+        <option value="Riverside Memories.mp3">Riverside Memories</option>
+        <option value="Shine From Within.mp3">Shine From Within</option>
+        <option value="Swingin’ at Flapjacks (1).mp3">Swingin’ at Flapjacks (1)</option>
+        <option value="Swingin’ at Flapjacks.mp3">Swingin’ at Flapjacks</option>
+        <option value="Tarpon Mini Doc.mp3">Tarpon Mini Doc</option>
+        <option value="Tarpon Springs Anthem.mp3">Tarpon Springs Anthem</option>
+        <option value="Tarpon Springs_ The Living Greek Legacy (1).mp3">Tarpon Springs_ The Living Greek Legacy (1)</option>
+        <option value="Tarpon Springs_ The Living Greek Legacy.mp3">Tarpon Springs_ The Living Greek Legacy</option>
+        <option value="The Elephant in the Room (1).mp3">The Elephant in the Room (1)</option>
+        <option value="The Elephant in the Room.mp3">The Elephant in the Room</option>
+        <option value="The Hickory Point Life (1).mp3">The Hickory Point Life (1)</option>
+        <option value="The Hickory Point Life.mp3">The Hickory Point Life</option>
+        <option value="The Library Is Open.mp3">The Library Is Open</option>
+        <option value="The Sea Remembers Us (1).mp3">The Sea Remembers Us (1)</option>
+        <option value="The Sea Remembers Us (2).mp3">The Sea Remembers Us (2)</option>
+        <option value="The Sea Remembers Us (3).mp3">The Sea Remembers Us (3)</option>
+        <option value="The Sea Remembers Us (4).mp3">The Sea Remembers Us (4)</option>
+        <option value="The Sea Remembers Us (5).mp3">The Sea Remembers Us (5)</option>
+        <option value="The Sea Remembers Us.mp3">The Sea Remembers Us</option>
+        <option value="This Is Our Sound.mp3">This Is Our Sound</option>
+        <option value="Time to Live (KOA Freedom Ride) (1).mp3">Time to Live (KOA Freedom Ride) (1)</option>
+        <option value="Time to Live (KOA Freedom Ride).mp3">Time to Live (KOA Freedom Ride)</option>
+        <option value="Use this one.mp3">Use this one</option>
+        <option value="Whispers in the River (Instrumental) (1).mp3">Whispers in the River (Instrumental) (1)</option>
+        <option value="Whispers in the River (Instrumental) (2).mp3">Whispers in the River (Instrumental) (2)</option>
+        <option value="Whispers in the River (Instrumental).mp3">Whispers in the River (Instrumental)</option>
+    </select>
+
+    <div class="now-playing">
+        Now playing: <span id="nowPlayingText"></span>
+    </div>
+
+    <audio id="audioPlayer" controls autoplay></audio>
+
+    <div class="equalizer">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+</div>
+
+<script>
+const baseUrl = "https://airinsmusic.s3.us-east-2.amazonaws.com/Music/";
+
+let playlist = document.getElementById("trackList");
+let audio = document.getElementById("audioPlayer");
+let nowPlayingText = document.getElementById("nowPlayingText");
+
+audio.addEventListener("ended", function () {
+    nextTrack();
+});
+
+function updateNowPlayingLabel() {
+    const label = playlist.options[playlist.selectedIndex].text;
+    nowPlayingText.textContent = label;
+}
+
+function changeTrack() {
+    let rawFile = playlist.value;
+    let encodedPath = encodeURIComponent(rawFile);
+    audio.src = baseUrl + encodedPath;
+    audio.load();
+    audio.play();
+    updateNowPlayingLabel();
+}
+
+function nextTrack() {
+    let i = playlist.selectedIndex;
+    i = (i + 1) % playlist.options.length;
+    playlist.selectedIndex = i;
+    changeTrack();
+}
+
+function prevTrack() {
+    let i = playlist.selectedIndex;
+    i = (i - 1 + playlist.options.length) % playlist.options.length;
+    playlist.selectedIndex = i;
+    changeTrack();
+}
+
+function togglePlay() {
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
+
+// Initialize first track on load
+changeTrack();
+</script>
+
+</body>
+</html>
