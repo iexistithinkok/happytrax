@@ -1,0 +1,40 @@
+name: Update assets playlist
+on:
+  push:
+    paths:
+      - 'assets/**'
+jobs:
+  build-playlist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find audio files and write playlist.json
+        run: |
+          cd $GITHUB_WORKSPACE
+          # find audio files (adjust extensions as needed)
+          files=$(find assets -type f \( -iname '*.mp3' -o -iname '*.ogg' -o -iname '*.wav' \) | sort)
+          echo '[' > assets/playlist.json
+          first=true
+          for f in $files; do
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo ',' >> assets/playlist.json
+            fi
+            title=$(basename "$f")
+            # escape backslashes and quotes in filename (simple)
+            file_json=$(printf '%s' "$f" | sed 's/\\/\\\\/g; s/"/\\"/g')
+            printf '  { "file": "%s", "title": "%s" }\n' "$file_json" "$title" >> assets/playlist.json
+          done
+          echo ']' >> assets/playlist.json
+      - name: Commit playlist.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- assets/playlist.json; then
+            git add assets/playlist.json
+            git commit -m "chore: update assets/playlist.json"
+            git push
+          else
+            echo "No changes to playlist.json"
+          fi
