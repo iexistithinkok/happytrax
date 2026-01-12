@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HappyTrax Player</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1.5rem; max-width: 800px; margin:auto; }
+    .playlist { margin-top: 1rem; list-style:none; padding:0; }
+    .playlist li { padding:.5rem; cursor:pointer; border-radius:6px; }
+    .playlist li.active { background:#eef; }
+    .controls { margin-top:.5rem; }
+  </style>
+</head>
+<body>
+  <h1>HappyTrax Player</h1>
+
+  <div>
+    <audio id="player" controls preload="none"></audio>
+  </div>
+
+  <div class="controls">
+    <button id="prev">Prev</button>
+    <button id="next">Next</button>
+  </div>
+
+  <ul id="playlist" class="playlist"></ul>
+
+  <script>
+    const manifestUrl = 'assets/playlist.json'; // change if you use another path
+    let tracks = [];
+    let current = 0;
+    const player = document.getElementById('player');
+    const playlistEl = document.getElementById('playlist');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+
+    async function loadManifest() {
+      try {
+        const res = await fetch(manifestUrl, {cache: 'no-store'});
+        if (!res.ok) throw new Error('Manifest not found');
+        tracks = await res.json();
+        buildPlaylist();
+        loadTrack(current);
+      } catch (err) {
+        console.warn('Could not load manifest:', err);
+        playlistEl.innerHTML = '<li>Playlist manifest not found. Add assets/playlist.json or use the GitHub API fallback.</li>';
+      }
+    }
+
+    function buildPlaylist() {
+      playlistEl.innerHTML = '';
+      tracks.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.textContent = t.title || t.file;
+        li.addEventListener('click', () => { current = i; loadTrack(i); player.play(); });
+        playlistEl.appendChild(li);
+      });
+      highlight();
+    }
+
+    function loadTrack(i) {
+      const t = tracks[i];
+      if (!t) return;
+      player.src = t.file;
+      highlight();
+    }
+
+    function highlight() {
+      Array.from(playlistEl.children).forEach((li, i) => {
+        li.classList.toggle('active', i === current);
+      });
+    }
+
+    player.addEventListener('ended', () => {
+      current = (current + 1) % tracks.length;
+      loadTrack(current);
+      player.play();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (!tracks.length) return;
+      current = (current - 1 + tracks.length) % tracks.length;
+      loadTrack(current);
+      player.play();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (!tracks.length) return;
+      current = (current + 1) % tracks.length;
+      loadTrack(current);
+      player.play();
+    });
+
+    // load on start
+    loadManifest();
+  </script>
+</body>
+</html>
